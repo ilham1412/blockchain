@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Register Work - Copyright Registry{% endblock %}
+
+{% block content %}
+<h2>📝 Register New Work</h2>
+<p style="margin-bottom: 20px;">Upload your work to create an immutable proof of ownership on the blockchain.</p>
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Select File *</label>
+        <input type="file" id="file" name="file" required>
+        <small style="color: #666;">Supported: images, documents, audio, video (max 16MB)</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="work_title">Work Title *</label>
+        <input type="text" id="work_title" name="work_title" placeholder="e.g., Sunset Painting" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="work_type">Work Type *</label>
+        <select id="work_type" name="work_type" required>
+            <option value="">Select type...</option>
+            <option value="image">Image/Artwork</option>
+            <option value="text">Text/Document</option>
+            <option value="music">Music/Audio</option>
+            <option value="video">Video</option>
+            <option value="photography">Photography</option>
+            <option value="code">Source Code</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="metadata">Additional Information (optional)</label>
+        <textarea id="metadata" name="metadata" rows="3" 
+                  placeholder="e.g., Created on vacation in Bali, original artwork..."></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="account_password">Account Password *</label>
+        <input type="password" id="account_password" name="account_password" 
+               placeholder="Enter your blockchain account password" required>
+        <small style="color: #666;">Required to sign the blockchain transaction</small>
+    </div>
+    
+    <button type="submit" class="btn">🚀 Register on Blockchain</button>
+</form>
+{% endblock %}

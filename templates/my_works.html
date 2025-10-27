@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}My Works - Copyright Registry{% endblock %}
+
+{% block content %}
+<h2>📚 My Registered Works</h2>
+<p style="margin-bottom: 20px;">All works registered from your blockchain account.</p>
+
+{% if works %}
+    <p><strong>Total: {{ works|length }} work(s)</strong></p>
+    
+    {% for work in works %}
+    <div class="work-card">
+        <h3>{{ work.title }}</h3>
+        <p><strong>Work ID:</strong> {{ work.work_id }}</p>
+        <p><strong>Type:</strong> {{ work.type }}</p>
+        <p><strong>Registered:</strong> {{ work.timestamp }}</p>
+        <a href="{{ url_for('verify', work_id=work.work_id) }}" 
+           style="color: #667eea; text-decoration: none;">
+            View Details →
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning">
+        <p>No works registered yet.</p>
+        <p><a href="{{ url_for('register') }}" style="color: #856404;">Register your first work →</a></p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{
+  "work_id": "WORK-B1A3D5F3",
+  "title": "Sunset Painting",
+  "type": "image",
+  "content_hash": "24466bbc756be2472263d11320757e475547cb75fa93b1309bc5b89248433462",
+  "creator": "0x5768097d5dEEE4Fb729db86874C988499cFB26aC",
+  "tx_hash": "4f86b1e65096f41c333349b0992f9a717a95964ed612d6c55f0852dede44128f",
+  "block_number": 96,
+  "gas_used": 306332,
+  "timestamp": "2025-10-27T23:44:03.084139"
+}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Welcome to Copyright Registry</h2>
+<p style="margin: 20px 0; line-height: 1.6;">
+    This platform allows artists, writers, and creators to register proof of ownership
+    of their work on the blockchain. Once registered, you'll have immutable evidence
+    that you created the work at a specific date and time.
+</p>
+
+<div class="work-card">
+    <h3>🎨 How It Works</h3>
+    <p><strong>1. Upload Your Work:</strong> Submit your file (image, document, music, etc.)</p>
+    <p><strong>2. Blockchain Registration:</strong> We calculate a unique hash of your work and record it on the blockchain</p>
+    <p><strong>3. Proof of Ownership:</strong> You receive a unique Work ID that proves you registered it first</p>
+    <p><strong>4. Verification:</strong> Anyone can verify the authenticity of your work using the Work ID</p>
+</div>
+
+<div class="work-card">
+    <h3>✨ Features</h3>
+    <p>✓ Immutable proof of creation date</p>
+    <p>✓ Cannot be backdated or altered</p>
+    <p>✓ Publicly verifiable</p>
+    <p>✓ Supports multiple file types</p>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{{ url_for('register') }}" class="btn">Register Your First Work</a>
+</div>
+{% endblock %}

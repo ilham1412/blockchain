@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Work - Copyright Registry{% endblock %}
+
+{% block content %}
+<h2>🔍 Verify Work Registration</h2>
+<p style="margin-bottom: 20px;">Enter a Work ID to view registration details and verify authenticity.</p>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="work_id">Work ID</label>
+        <input type="text" id="work_id" name="work_id" 
+               placeholder="e.g., WORK-12345678" 
+               value="{{ request.form.get('work_id', '') or request.args.get('work_id', '') }}">
+    </div>
+    
+    <button type="submit" class="btn">Verify</button>
+</form>
+
+{% if work_details %}
+<div class="work-card" style="margin-top: 30px;">
+    <h3>✅ Registration Confirmed</h3>
+    <p><strong>Work ID:</strong> {{ work_details.work_id }}</p>
+    <p><strong>Title:</strong> {{ work_details.title }}</p>
+    <p><strong>Type:</strong> {{ work_details.type }}</p>
+    <p><strong>Creator:</strong> <span class="hash">{{ work_details.creator }}</span></p>
+    <p><strong>Registered:</strong> {{ work_details.timestamp }}</p>
+    {% if work_details.metadata %}
+    <p><strong>Additional Info:</strong> {{ work_details.metadata }}</p>
+    {% endif %}
+    <p><strong>Content Hash:</strong></p>
+    <p class="hash">{{ work_details.content_hash }}</p>
+</div>
+{% endif %}
+{% endblock %}
