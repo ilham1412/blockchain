@@ -229,7 +229,7 @@ def register_work(
                 "timestamp": datetime.now().isoformat()
             }
             
-            output_file = f"registration_{work_id}.json"
+            output_file = f"hasil/registration_{work_id}.json"
             with open(output_file, "w") as f:
                 json.dump(registration_info, f, indent=2)
             print(f"\n💾 Registration details saved to {output_file}")
