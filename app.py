@@ -124,15 +124,108 @@ def register():
     
     return render_template('register.html')
 
+def normalize_hash_input(h):
+    if not h:
+        return ""
+    h = h.strip()
+    if h.startswith("0x") or h.startswith("0X"):
+        h = h[2:]
+    return h.lower()
+
+# ----- Ganti atau perbarui route /verify menjadi seperti ini -----
 @app.route('/verify', methods=['GET', 'POST'])
 def verify():
-    """Verify work page"""
+    """Verify work page - now supports Work ID, file upload, OR content hash"""
     work_details = None
     work_id = request.args.get('work_id')
-    
+
     if request.method == 'POST':
-        work_id = request.form.get('work_id')
-    
+        # Prioritas: jika user isi work_id gunakan itu,
+        # lalu cek content_hash, lalu file upload
+        work_id = request.form.get('work_id') or None
+        content_hash_input = request.form.get('content_hash') or None
+        file = request.files.get('file')
+
+        # If file provided, calculate hash
+        content_hash_from_file = None
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            # calculate hash (same helper as before)
+            content_hash_from_file = calculate_file_hash(filepath)
+
+        # If content_hash_input provided, normalize
+        if content_hash_input:
+            normalized = normalize_hash_input(content_hash_input)
+            # ensure '0x' prefix if your contract stored with 0x; try both later
+        else:
+            normalized = None
+
+        # Load contract
+        contract = get_contract()
+        if not contract:
+            flash('Contract not deployed', 'error')
+            return redirect(url_for('index'))
+
+        # 1) If work_id provided: fetch details and optionally compare hash/file
+        if work_id:
+            try:
+                details = contract.functions.getWorkDetails(work_id).call()
+                work_details = {
+                    'work_id': details[0],
+                    'title': details[1],
+                    'type': details[2],
+                    'content_hash': details[3],
+                    'creator': details[4],
+                    'timestamp': datetime.fromtimestamp(details[5]).strftime('%Y-%m-%d %H:%M:%S UTC'),
+                    'metadata': details[6]
+                }
+                # Compare hash if available
+                target_hash = content_hash_from_file or normalized
+                if target_hash:
+                    # try compare both variants (with/without 0x) - smart contract may use hex with 0x
+                    try:
+                        is_valid = contract.functions.verifyWork(work_id, target_hash).call()
+                    except:
+                        # try with 0x prefix
+                        try:
+                            is_valid = contract.functions.verifyWork(work_id, "0x" + target_hash).call()
+                        except:
+                            is_valid = False
+                    if is_valid:
+                        flash('File/hash MATCHES registered work!', 'success')
+                    else:
+                        flash('File/hash DOES NOT MATCH registered work', 'warning')
+            except Exception as e:
+                flash(f'Work not found: {str(e)}', 'error')
+            return render_template('verify.html', work_details=work_details)
+
+        # 2) If no work_id but content hash provided -> lookup by hash
+        if normalized or content_hash_from_file:
+            search_hash = content_hash_from_file or normalized
+            found_id = None
+            try:
+                # try as-is
+                found_id = contract.functions.checkContentExists(search_hash).call()
+            except:
+                # try with 0x prefix
+                try:
+                    found_id = contract.functions.checkContentExists("0x" + search_hash).call()
+                except:
+                    found_id = ""
+            if found_id:
+                flash(f'Content found on-chain: {found_id}', 'success')
+                return redirect(url_for('verify', work_id=found_id))
+            else:
+                flash('Content hash not found on-chain', 'warning')
+                return render_template('verify.html', work_details=None)
+
+        # If reached here, nothing provided
+        flash('Please provide Work ID, upload a file, or paste a content hash.', 'error')
+        return render_template('verify.html', work_details=None)
+
+    # GET request: show empty form or details if ?work_id=...
     if work_id:
         contract = get_contract()
         if contract:
@@ -149,7 +242,7 @@ def verify():
                 }
             except Exception as e:
                 flash(f'Work not found: {str(e)}', 'error')
-    
+
     return render_template('verify.html', work_details=work_details)
 
 @app.route('/my-works')

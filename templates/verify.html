@@ -6,15 +6,26 @@
 <h2>🔍 Verify Work Registration</h2>
 <p style="margin-bottom: 20px;">Enter a Work ID to view registration details and verify authenticity.</p>
 
-<form method="POST">
-    <div class="form-group">
-        <label for="work_id">Work ID</label>
-        <input type="text" id="work_id" name="work_id" 
-               placeholder="e.g., WORK-12345678" 
-               value="{{ request.form.get('work_id', '') or request.args.get('work_id', '') }}">
-    </div>
-    
-    <button type="submit" class="btn">Verify</button>
+<!-- Tambahkan field Content Hash di form verify -->
+<form method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="work_id">Work ID</label>
+    <input type="text" id="work_id" name="work_id" placeholder="e.g., WORK-12345678">
+  </div>
+
+  <div class="form-group">
+    <label for="file">Or Upload File to verify</label>
+    <input type="file" id="file" name="file">
+  </div>
+
+  <div class="form-group">
+    <label for="content_hash">Or Paste Content Hash (SHA-256)</label>
+    <input type="text" id="content_hash" name="content_hash"
+           placeholder="e.g., 24466bbc756be2472263d11320757e475547cb75fa93b1309bc5b89248433462 or 0x...">
+    <small style="color:#666;">Paste full 64-hex characters. With or without 0x is ok.</small>
+  </div>
+
+  <button type="submit" class="btn">Verify</button>
 </form>
 
 {% if work_details %}

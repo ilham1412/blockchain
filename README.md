@@ -20,7 +20,7 @@ This platform allows artists, writers, and creators to register immutable proof 
 ```
 ┌─────────────────────────────────────────┐
 │         Flask Web Application           │
-│  (Frontend: HTML/CSS, Backend: Python)  │
+│  (Frontend: HTML, Backend: Python)  │
 └─────────────┬───────────────────────────┘
               │
               ↓
