@@ -97,12 +97,22 @@ def register():
             work_id = f"WORK-{uuid.uuid4().hex[:8].upper()}"
             
             nonce = w3.eth.get_transaction_count(account.address)
+            
+            # Estimate gas dynamically
+            try:
+                gas_estimate = contract.functions.registerWork(
+                    work_id, work_title, work_type, content_hash, metadata
+                ).estimate_gas({'from': account.address})
+                gas_limit = int(gas_estimate * 1.2)  # Add 20% buffer
+            except Exception:
+                gas_limit = 500000  # Fallback gas limit
+            
             tx = contract.functions.registerWork(
                 work_id, work_title, work_type, content_hash, metadata
             ).build_transaction({
                 'from': account.address,
                 'nonce': nonce,
-                'gas': 300000,
+                'gas': gas_limit,
                 'gasPrice': w3.eth.gas_price,
                 'chainId': config.CHAIN_ID
             })
@@ -111,11 +121,12 @@ def register():
             tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
             receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
             
-            if receipt.status == 1:
+            # receipt.status can be 1, True, or other truthy values depending on web3 version
+            if receipt.status:
                 flash(f'Work registered successfully! Work ID: {work_id}', 'success')
                 return redirect(url_for('verify', work_id=work_id))
             else:
-                flash('Transaction failed', 'error')
+                flash(f'Transaction failed. Gas used: {receipt.gasUsed}', 'error')
         
         except Exception as e:
             flash(f'Error: {str(e)}', 'error')

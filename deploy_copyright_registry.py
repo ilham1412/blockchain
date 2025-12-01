@@ -4,7 +4,7 @@ from getpass import getpass
 import sys
 
 # Configuration
-HTTP_PROVIDER = "http://localhost:8545"
+HTTP_PROVIDER = "http://10.6.6.11:6102"
 DEPLOYER_ADDRESS = "0x5768097d5dEEE4Fb729db86874C988499cFB26aC"
 KEY_UTC_FILE = 'data/keystore/UTC--2025-10-27T16-13-44.677266800Z--5768097d5deee4fb729db86874c988499cfb26ac'
 CHAIN_ID = 110261

@@ -3,44 +3,136 @@
 {% block title %}Verify Work - Copyright Registry{% endblock %}
 
 {% block content %}
-<h2>🔍 Verify Work Registration</h2>
-<p style="margin-bottom: 20px;">Enter a Work ID to view registration details and verify authenticity.</p>
+<style>
+    /* Styling khusus untuk pemisah "OR" */
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: var(--text-muted);
+        margin: 25px 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .divider::before { margin-right: 15px; }
+    .divider::after { margin-left: 15px; }
 
-<!-- Tambahkan field Content Hash di form verify -->
-<form method="POST" enctype="multipart/form-data">
-  <div class="form-group">
-    <label for="work_id">Work ID</label>
-    <input type="text" id="work_id" name="work_id" placeholder="e.g., WORK-12345678">
-  </div>
+    /* Styling untuk tabel hasil */
+    .detail-row {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 15px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--text-muted); font-weight: 500; }
+    .detail-value { color: var(--text-main); font-weight: 500; }
+</style>
 
-  <div class="form-group">
-    <label for="file">Or Upload File to verify</label>
-    <input type="file" id="file" name="file">
-  </div>
+<div style="max-width: 800px; margin: 0 auto;">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2>Verify Authenticity</h2>
+        <p>Check if a digital asset is registered on the blockchain using one of the methods below.</p>
+    </div>
 
-  <div class="form-group">
-    <label for="content_hash">Or Paste Content Hash (SHA-256)</label>
-    <input type="text" id="content_hash" name="content_hash"
-           placeholder="e.g., 24466bbc756be2472263d11320757e475547cb75fa93b1309bc5b89248433462 or 0x...">
-    <small style="color:#666;">Paste full 64-hex characters. With or without 0x is ok.</small>
-  </div>
+    <div class="card">
+        <form method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="work_id">Method 1: Enter Work ID</label>
+                <input type="text" id="work_id" name="work_id" placeholder="e.g., WORK-A1B2C3D4">
+            </div>
 
-  <button type="submit" class="btn">Verify</button>
-</form>
+            <div class="divider">OR</div>
 
-{% if work_details %}
-<div class="work-card" style="margin-top: 30px;">
-    <h3>✅ Registration Confirmed</h3>
-    <p><strong>Work ID:</strong> {{ work_details.work_id }}</p>
-    <p><strong>Title:</strong> {{ work_details.title }}</p>
-    <p><strong>Type:</strong> {{ work_details.type }}</p>
-    <p><strong>Creator:</strong> <span class="hash">{{ work_details.creator }}</span></p>
-    <p><strong>Registered:</strong> {{ work_details.timestamp }}</p>
-    {% if work_details.metadata %}
-    <p><strong>Additional Info:</strong> {{ work_details.metadata }}</p>
+            <div class="form-group">
+                <label for="file">Method 2: Upload Original File</label>
+                <input type="file" id="file" name="file" style="padding: 10px; height: auto;">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">
+                    We calculate the SHA-256 hash locally. The file is never stored.
+                </small>
+            </div>
+
+            <div class="divider">OR</div>
+
+            <div class="form-group">
+                <label for="content_hash">Method 3: Paste Content Hash</label>
+                <input type="text" id="content_hash" name="content_hash" 
+                       placeholder="e.g., 24466bbc... (SHA-256 Hex)">
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
+                Verify Now
+            </button>
+        </form>
+    </div>
+
+    {% if work_details %}
+    <div class="card" style="margin-top: 30px; border-left: 5px solid var(--success);">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+            <div style="font-size: 2rem;">✅</div>
+            <div>
+                <h3 style="margin: 0; color: var(--success);">Registration Confirmed</h3>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">This work is authentically registered on the blockchain.</span>
+            </div>
+        </div>
+
+        <div class="work-details">
+            <div class="detail-row">
+                <div class="detail-label">Work Title</div>
+                <div class="detail-value" style="font-size: 1.2rem; color: var(--accent-color);">{{ work_details.title }}</div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Work ID</div>
+                <div class="detail-value">{{ work_details.work_id }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Type</div>
+                <div class="detail-value" style="text-transform: capitalize;">{{ work_details.type }}</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Creator Address</div>
+                <div class="detail-value">
+                    <div class="hash-display">{{ work_details.creator }}</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Registered At</div>
+                <div class="detail-value">{{ work_details.timestamp }}</div>
+            </div>
+
+            {% if work_details.metadata %}
+            <div class="detail-row">
+                <div class="detail-label">Metadata</div>
+                <div class="detail-value" style="font-style: italic;">{{ work_details.metadata }}</div>
+            </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <div class="detail-label">Digital Fingerprint<br>(Content Hash)</div>
+                <div class="detail-value">
+                    <div class="hash-display">{{ work_details.content_hash }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
-    <p><strong>Content Hash:</strong></p>
-    <p class="hash">{{ work_details.content_hash }}</p>
+
+    {% if request.method == 'POST' and not work_details %}
+        {% endif %}
+
 </div>
-{% endif %}
 {% endblock %}

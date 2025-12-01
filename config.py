@@ -12,7 +12,7 @@ def get_contract_address():
         with open("contract_address.txt", "r") as f:
             return f.read().strip()
     except FileNotFoundError:
-        print("⚠️  contract_address.txt not found")
+        print("contract_address.txt not found")
         print("   Deploy contract first: python deploy_copyright_registry.py")
         return None
 

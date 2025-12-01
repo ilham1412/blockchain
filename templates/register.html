@@ -3,48 +3,79 @@
 {% block title %}Register Work - Copyright Registry{% endblock %}
 
 {% block content %}
-<h2>📝 Register New Work</h2>
-<p style="margin-bottom: 20px;">Upload your work to create an immutable proof of ownership on the blockchain.</p>
+<div style="max-width: 700px; margin: 0 auto;">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2>Register New Work</h2>
+        <p>Upload your work to create an immutable proof of ownership on the blockchain.</p>
+    </div>
 
-<form method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="file">Select File *</label>
-        <input type="file" id="file" name="file" required>
-        <small style="color: #666;">Supported: images, documents, audio, video (max 16MB)</small>
+    <div class="card">
+        <form method="POST" enctype="multipart/form-data">
+            
+            <div style="margin-bottom: 30px;">
+                <h3 style="font-size: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">
+                    Asset Details
+                </h3>
+
+                <div class="form-group">
+                    <label for="file">Select File *</label>
+                    <input type="file" id="file" name="file" required 
+                           style="padding: 10px; height: auto;">
+                    <small style="color: var(--text-muted); display: block; margin-top: 8px; font-size: 0.85rem;">
+                        Supported formats: images, documents, audio, video (max 16MB)
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work_title">Work Title *</label>
+                    <input type="text" id="work_title" name="work_title" 
+                           placeholder="e.g., Sunset Painting 2024" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work_type">Work Type *</label>
+                    <select id="work_type" name="work_type" required>
+                        <option value="" disabled selected>Select category...</option>
+                        <option value="image">🖼️ Image/Artwork</option>
+                        <option value="text">📄 Text/Document</option>
+                        <option value="music">🎵 Music/Audio</option>
+                        <option value="video">🎬 Video</option>
+                        <option value="photography">📷 Photography</option>
+                        <option value="code">💻 Source Code</option>
+                        <option value="other">📦 Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="metadata">Additional Information (optional)</label>
+                    <textarea id="metadata" name="metadata" rows="3" 
+                            placeholder="Describe your work, location, or inspiration..."></textarea>
+                </div>
+            </div>
+            
+            <div style="background: rgba(56, 189, 248, 0.05); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h3 style="font-size: 1.1rem; color: var(--accent-color); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    Authorization
+                </h3>
+                
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="account_password">Wallet Password *</label>
+                    <input type="password" id="account_password" name="account_password" 
+                           placeholder="Enter your Keystore password to sign transaction" required>
+                    <small style="color: var(--text-muted); display: block; margin-top: 8px; font-size: 0.85rem;">
+                        This creates a blockchain transaction. Small amount of ETH gas fee applies.
+                    </small>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                    Register on Blockchain
+                </button>
+            </div>
+
+        </form>
     </div>
-    
-    <div class="form-group">
-        <label for="work_title">Work Title *</label>
-        <input type="text" id="work_title" name="work_title" placeholder="e.g., Sunset Painting" required>
-    </div>
-    
-    <div class="form-group">
-        <label for="work_type">Work Type *</label>
-        <select id="work_type" name="work_type" required>
-            <option value="">Select type...</option>
-            <option value="image">Image/Artwork</option>
-            <option value="text">Text/Document</option>
-            <option value="music">Music/Audio</option>
-            <option value="video">Video</option>
-            <option value="photography">Photography</option>
-            <option value="code">Source Code</option>
-            <option value="other">Other</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label for="metadata">Additional Information (optional)</label>
-        <textarea id="metadata" name="metadata" rows="3" 
-                  placeholder="e.g., Created on vacation in Bali, original artwork..."></textarea>
-    </div>
-    
-    <div class="form-group">
-        <label for="account_password">Account Password *</label>
-        <input type="password" id="account_password" name="account_password" 
-               placeholder="Enter your blockchain account password" required>
-        <small style="color: #666;">Required to sign the blockchain transaction</small>
-    </div>
-    
-    <button type="submit" class="btn">🚀 Register on Blockchain</button>
-</form>
+</div>
 {% endblock %}
