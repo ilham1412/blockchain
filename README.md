@@ -83,6 +83,15 @@ blockchain/
 - Node.js and npm (for Solidity compiler)
 - Geth (Go-Ethereum)
 
+### Required Software
+
+| Software | Version | Purpose | Installation |
+|----------|---------|---------|--------------|
+| **Geth** | ≥ 1.13.15 | Ethereum blockchain client | [Download](https://geth.ethereum.org/downloads) |
+| **Solc** | ≥ 0.8.26 | Solidity compiler | [Install Guide](https://docs.soliditylang.org/en/latest/installing-solidity.html) |
+| **Python** | ≥ 3.12 | Runtime for scripts | [Download](https://www.python.org/downloads/) |
+| **pip** | Latest | Package manager | Included with Python |
+
 ### Setup Dependencies
 ```bash
 pip install flask werkzeug web3
