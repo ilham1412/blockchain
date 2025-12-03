@@ -75,7 +75,7 @@ blockchain/
 └── build/                          # Compiled contract artifacts
 ```
 
-## 🚀 Installation
+## 🚀 Installation & Setup (Langkah-Langkah)
 
 ### Prerequisites
 
@@ -83,85 +83,109 @@ blockchain/
 - Node.js and npm (for Solidity compiler)
 - Geth (Go-Ethereum)
 
-### Step 1: Clone Repository
-
+### Setup Dependencies
 ```bash
-git clone https://github.com/ilham1412/blockchain.git
-cd blockchain
+pip install flask werkzeug web3
 ```
 
-### Step 2: Install Python Dependencies
-
+### Step 1: Prepare Data Directories and Accounts
+Create data directories and generate 3 Ethereum accounts.
 ```bash
-pip install flask web3 werkzeug
+mkdir data
+# Create 3 accounts. Save the addresses and key paths.
+geth --datadir data account new
+geth --datadir data account new
+geth --datadir data account new
+```
+*Example Accounts:*
+- Account 1 (Deployer)
+- Account 2
+- Account 3 (Miner)
+
+### Step 2: Initialize Genesis Block
+Edit `genesis.json` (copy from reference) with the following changes:
+
+1. **Replace the `alloc` section** with Account 1:
+   ```json
+   "alloc": {
+     "0xACCOUNT1": { "balance": "1000000000000000000000" }
+   }
+   ```
+
+2. **Replace the `extradata` field** with Account 3 address (without the `0x` prefix).
+   Format:
+   ```json
+   "extradata": "0x000000000000000000000000ACCOUNT3WITHOUT0X0000000000000000000000000000000000000"
+   ```
+
+Then initialize the first node:
+```bash
+geth --datadir data init genesis.json
 ```
 
-### Step 3: Install Solidity Compiler
-
+### Step 3: Run First Node (Miner)
+Run the first client using Account 3 and get the enode URL.
 ```bash
-npm install -g solc
+# Replace ADDRESS_ACCOUNT_3 with your actual account address
+geth --datadir data --mine --miner.etherbase 0xADDRESS_ACCOUNT_3 --unlock 0xADDRESS_ACCOUNT_3 --allow-insecure-unlock --http --http.corsdomain "*"
+```
+*Note: Copy the `enode://...` URL from the output.*
+
+### Step 4: Setup Second Node
+Create `data2` directory, initialize, and run the second node connecting to the first.
+```bash
+mkdir data2
+geth --datadir data2 init genesis.json
+
+# Replace ENODE_URL with the one from Step 3
+geth --datadir data2 --port 30305 --authrpc.port 8552 --http --bootnodes ENODE_URL --ipcpath //./pipe/geth-data2.ipc
 ```
 
-### Step 4: Install Geth
+### Step 5: Configure Application
+Edit `config.py` and update the following variables with Account 1's details:
+- `ACCOUNT_ADDRESS`: Your Account 1 address
+- `UTC_KEYSTORE_FILE`: Path to your Account 1 keystore file
 
-**Linux/Mac:**
+### Step 6: Configure Deployment Script
+Edit `deploy_copyright_registry.py` and update the following variables with Account 1's details:
+- `DEPLOYER_ADDRESS`: Your Account 1 address
+- `KEY_UTC_FILE`: Path to your Account 1 keystore file
+
+### Step 7: Compile Smart Contract
+Compile `copyright_registry.sol` to generate ABI and BIN files.
 ```bash
-# Follow instructions at https://geth.ethereum.org/docs/install-and-build/installing-geth
+solc --evm-version london copyright_registry.sol --abi --bin -o build --overwrite
 ```
 
-**Windows:**
-Download from [https://geth.ethereum.org/downloads](https://geth.ethereum.org/downloads)
+### Step 8: Setup Web Application
+Ensure `app.py` and `templates/` folder are set up for the UI.
 
-## ⚙️ Configuration
-
-### 1. Initialize Blockchain
-
+### Step 9: Run Web Application
 ```bash
-# Create data directory
-mkdir -p data/keystore
-
-# Initialize blockchain with genesis block
-geth --datadir ./data init genesis.json
+python app.py
 ```
 
-### 2. Create Ethereum Account
+## 🏃‍♂️ How to Run
 
+### 1. Start Blockchain Nodes
+**Terminal 1 (Node 1 - Miner):**
 ```bash
-geth --datadir ./data account new
-# Save the address and password securely
+geth --datadir data --mine --miner.etherbase 0xADDRESS_ACCOUNT_3 --unlock 0xADDRESS_ACCOUNT_3
 ```
 
-### 3. Update Configuration
-
-Edit `config.py` with your account details:
-
-```python
-ACCOUNT_ADDRESS = "0xYourAccountAddress"
-UTC_KEYSTORE_FILE = "data/keystore/UTC--your-keystore-file"
+**Terminal 2 (Node 2 - Peer):**
+```bash
+geth --datadir data2 --port 30305 --authrpc.port 8552 --http --bootnodes ENODE_URL --ipcpath //./pipe/geth-data2.ipc
 ```
 
-### 4. Start Blockchain Node
-
+### 2. Deploy Contract (First Time Only)
 ```bash
-geth --datadir ./data \
-     --networkid 110261 \
-     --http \
-     --http.addr "0.0.0.0" \
-     --http.port 8545 \
-     --http.api "eth,net,web3,personal" \
-     --allow-insecure-unlock \
-     console
-```
-
-### 5. Deploy Smart Contract
-
-```bash
-# Compile contract
-solc --abi --bin copyright_registry.sol -o build/ --overwrite
-
-# Deploy to blockchain
 python deploy_copyright_registry.py
-# Enter your account password when prompted
+```
+
+### 3. Run Web Application
+```bash
+python app.py
 ```
 
 ## 💻 Usage
@@ -174,7 +198,7 @@ python app.py
 ```
 
 2. **Access Application:**
-Open browser to `http://localhost:5000`
+Open browser to `http://127.0.0.1:5000`
 
 3. **Register a Work:**
    - Navigate to "Register Work"

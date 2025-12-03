@@ -1,4 +1,5 @@
 # Abaikan data blockchain
 data/
+data2/
 geth/
 *.lock
