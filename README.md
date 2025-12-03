@@ -127,7 +127,7 @@ geth --datadir data init genesis.json
 Run the first client using Account 3 and get the enode URL.
 ```bash
 # Replace ADDRESS_ACCOUNT_3 with your actual account address
-geth --datadir data --mine --miner.etherbase 0xADDRESS_ACCOUNT_3 --unlock 0xADDRESS_ACCOUNT_3 --allow-insecure-unlock --http --http.corsdomain "*"
+geth --datadir data --mine --miner.etherbase 0xADDRESS_ACCOUNT_3 --unlock 0xADDRESS_ACCOUNT_3
 ```
 *Note: Copy the `enode://...` URL from the output.*
 
