@@ -56,6 +56,9 @@ This platform allows artists, writers, and creators to register immutable proof 
 
 ```
 blockchain/
+├── .env                            # Environment variables (Private)
+├── .env.example                    # Example environment variables
+├── init_genesis.py                 # Genesis block generation script
 ├── copyright_registry.sol          # Smart contract (Solidity)
 ├── genesis.json                    # Blockchain genesis configuration
 ├── config.py                       # Configuration settings
@@ -72,7 +75,8 @@ blockchain/
 │   ├── verify.html
 │   └── my_works.html
 ├── uploads/                        # Uploaded files storage
-└── build/                          # Compiled contract artifacts
+├── build/                          # Compiled contract artifacts
+└── data/                           # Blockchain data directory (Generated)
 ```
 
 ## 🚀 Installation & Setup (Langkah-Langkah)
@@ -97,7 +101,14 @@ blockchain/
 pip install flask werkzeug web3 python-dotenv
 ```
 
-### Step 1: Prepare Data Directories and Accounts
+### Step 1: Configure Environment Variables
+Copy the example environment file:
+```bash
+cp .env.example .env
+# Or on Windows: copy .env.example .env
+```
+
+### Step 2: Prepare Data Directories and Accounts
 Create data directories and generate 3 Ethereum accounts.
 ```bash
 mkdir data
@@ -111,16 +122,9 @@ geth --datadir data account new
 - Account 2
 - Account 3 (Miner)
 
-### Step 2: Configure Environment Variables
-Copy the example environment file:
-```bash
-cp .env.example .env
-# Or on Windows: copy .env.example .env
-```
-
-Open `.env` and fill in the details for your accounts:
-- `ACCOUNT_1_ADDRESS`: Your Deployer address
-- `ACCOUNT_1_KEYSTORE`: Path to Deployer keystore
+**Important:** After creating the accounts, open your `.env` file and fill in the details:
+- `ACCOUNT_1_ADDRESS`: Your Deployer address (from first account created)
+- `ACCOUNT_1_KEYSTORE`: Path to Deployer keystore (e.g., `data/keystore/UTC--...`)
 - `ACCOUNT_2_ADDRESS`: Your second account address
 - `ACCOUNT_3_ADDRESS`: Your Miner address
 
