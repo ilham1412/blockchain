@@ -85,7 +85,7 @@ blockchain/
 
 ### Setup Dependencies
 ```bash
-pip install flask werkzeug web3
+pip install flask werkzeug web3 python-dotenv
 ```
 
 ### Step 1: Prepare Data Directories and Accounts
@@ -102,28 +102,33 @@ geth --datadir data account new
 - Account 2
 - Account 3 (Miner)
 
-### Step 2: Initialize Genesis Block
-Edit `genesis.json` (copy from reference) with the following changes:
+### Step 2: Configure Environment Variables
+Copy the example environment file:
+```bash
+cp .env.example .env
+# Or on Windows: copy .env.example .env
+```
 
-1. **Replace the `alloc` section** with Account 1:
-   ```json
-   "alloc": {
-     "0xACCOUNT1": { "balance": "1000000000000000000000" }
-   }
-   ```
+Open `.env` and fill in the details for your accounts:
+- `ACCOUNT_1_ADDRESS`: Your Deployer address
+- `ACCOUNT_1_KEYSTORE`: Path to Deployer keystore
+- `ACCOUNT_2_ADDRESS`: Your second account address
+- `ACCOUNT_3_ADDRESS`: Your Miner address
 
-2. **Replace the `extradata` field** with Account 3 address (without the `0x` prefix).
-   Format:
-   ```json
-   "extradata": "0x000000000000000000000000ACCOUNT3WITHOUT0X0000000000000000000000000000000000000"
-   ```
+*Note: The application will automatically use Account 1 for transactions.*
+
+### Step 3: Initialize Genesis Block
+Run the initialization script to generate `genesis.json` using your `.env` configuration:
+```bash
+python init_genesis.py
+```
 
 Then initialize the first node:
 ```bash
 geth --datadir data init genesis.json
 ```
 
-### Step 3: Run First Node (Miner)
+### Step 4: Run First Node (Miner)
 Run the first client using Account 3 and get the enode URL.
 ```bash
 # Replace ADDRESS_ACCOUNT_3 with your actual account address
@@ -131,7 +136,7 @@ geth --datadir data --mine --miner.etherbase 0xADDRESS_ACCOUNT_3 --unlock 0xADDR
 ```
 *Note: Copy the `enode://...` URL from the output.*
 
-### Step 4: Setup Second Node
+### Step 5: Setup Second Node
 Create `data2` directory, initialize, and run the second node connecting to the first.
 ```bash
 mkdir data2
@@ -141,26 +146,22 @@ geth --datadir data2 init genesis.json
 geth --datadir data2 --port 30305 --authrpc.port 8552 --http --bootnodes ENODE_URL --ipcpath //./pipe/geth-data2.ipc
 ```
 
-### Step 5: Configure Application
-Edit `config.py` and update the following variables with Account 1's details:
-- `ACCOUNT_ADDRESS`: Your Account 1 address
-- `UTC_KEYSTORE_FILE`: Path to your Account 1 keystore file
 
-### Step 6: Configure Deployment Script
-Edit `deploy_copyright_registry.py` and update the following variables with Account 1's details:
-- `DEPLOYER_ADDRESS`: Your Account 1 address
-- `KEY_UTC_FILE`: Path to your Account 1 keystore file
 
-### Step 7: Compile Smart Contract
+### Step 6: Compile Smart Contract
 Compile `copyright_registry.sol` to generate ABI and BIN files.
 ```bash
 solc --evm-version london copyright_registry.sol --abi --bin -o build --overwrite
 ```
 
-### Step 8: Setup Web Application
-Ensure `app.py` and `templates/` folder are set up for the UI.
+### Step 7: Deploy Smart Contract
+Deploy the contract to your private blockchain. Ensure your nodes are running (Step 4 & 5).
+```bash
+python deploy_copyright_registry.py
+```
 
-### Step 9: Run Web Application
+### Step 8: Run Web Application
+Start the Flask application.
 ```bash
 python app.py
 ```

@@ -1,5 +1,9 @@
 import os
 import json
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Blockchain Configuration
 RPC_URL = os.getenv("RPC_URL", "http://127.0.0.1:8545")
@@ -20,10 +24,11 @@ CONTRACT_ADDRESS = get_contract_address()
 ABI_FILE = "build/CopyrightRegistry.abi"
 
 # Account Configuration
-ACCOUNT_ADDRESS = os.getenv("ACCOUNT_ADDRESS", "0x5768097d5dEEE4Fb729db86874C988499cFB26aC")
+# Default to Account 1 for application operations
+ACCOUNT_ADDRESS = os.getenv("ACCOUNT_1_ADDRESS", "0xA59dCd5b7dfe01B4A0ca6ba8Af8948452c3970AD")
 UTC_KEYSTORE_FILE = os.getenv(
-    "UTC_KEYSTORE_FILE",
-    "data/keystore/UTC--2025-10-27T16-13-44.677266800Z--5768097d5deee4fb729db86874c988499cfb26ac"
+    "ACCOUNT_1_KEYSTORE",
+    "data/keystore/UTC--2025-12-03T16-05-43.471268900Z--a59dcd5b7dfe01b4a0ca6ba8af8948452c3970ad"
 )
 
 # Upload Configuration

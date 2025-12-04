@@ -3,3 +3,4 @@ data/
 data2/
 geth/
 *.lock
+.env
